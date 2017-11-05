@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import list from './list.js';
+// import Search from './components/Search';
 
 
 //filter the results by search
@@ -17,7 +18,7 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      list: list,
+      list,
       searchTerm: ' ',
 
     }
@@ -42,24 +43,77 @@ class App extends Component {
     const {list, searchTerm} = this.state;
     return (
       <div className="App">
-        <form>
-          <input type= "text" onChange = {this.searchValue}/>
-        </form>
-         {
-           list.filter(isSearched(searchTerm)).map((item) => {
-             return (
-               <div key= {item.objectID}>
-                 <h1>{item.title} by {item.author}</h1>
-                 <p>numberOfComments{item.num_comments} and points{item.points}</p>
-                 <button type = "button" onClick = {() => this.removeItem(item.objectID)}>Remove</button>
-               </div>
-             )
-           })
-         }
+        <Search
+        onChange = {this.searchValue} 
+        value = {searchTerm}
+        search = {this.searchValue.bind(this)}
+        />
+        <Table
+        list = {list}
+        searchTerm = {searchTerm}
+        removeItem = {this.removeItem}
+        />
        
       </div>
     );
   }
 }
+
+
+
+class Search extends Component{
+  
+  render(){
+  console.log('props value',this.props);
+  
+    return(
+      <form>
+      <input type= "text" 
+      onChange = {this.props.onChange} 
+      value = {this.props.value}/>
+      </form>
+    )
+  }
+
+}
+
+class Table extends Component{
+  
+  render(){
+    const {list, searchTerm, removeItem} = this.props;
+    return(
+      <div>
+      {
+           list.filter( isSearched(searchTerm)).map(item => 
+            
+               <div key= {item.objectID}>
+                 <h1>{item.title} by {item.author}</h1>
+                 <p>numberOfComments{item.num_comments} and points{item.points}</p>
+                 <Button 
+                  type = "button"
+                  onClick = {() => 
+                  removeItem(item.objectID)}
+                  >Remove
+                  </Button>
+               </div>
+               )
+      }
+      </div>
+    )
+  }
+}
+
+class Button extends Component{
+  render(){
+    const{type, onClick, children} = this.props;
+    return(
+      <button 
+      type = {type} 
+      onClick = {onClick}>{children}</button>
+      
+    )
+  }
+}
+
 
 export default App;
