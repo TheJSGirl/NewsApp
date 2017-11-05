@@ -11,17 +11,32 @@ class App extends Component {
     super(props)
     this.state = {
       list: list,
+      searchTerm: ' ',
 
     }
     //bind method
     this.removeItem = this.removeItem.bind(this);
+    this.searchValue = this.searchValue.bind(this);
   }
+
+  //search value
+  searchValue(e){
+
+    console.log({searchTerm: e.target.value});
+  }
+
+  //remove method
   removeItem(id){
-    console.log('remove item');
+    const notId = item => item.objectID !== id;
+    const updateList = this.state.list.filter(notId);
+    this.setState({list: updateList});
   }
   render() {
     return (
       <div className="App">
+        <form>
+          <input type= "text" onChange = {this.searchValue}/>
+        </form>
          {
           this.state.list.map((item) => {
              return (
