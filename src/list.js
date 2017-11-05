@@ -1,6 +1,6 @@
 const list = [
   {
-    title: 'tell me the truth without words',
+    title: 'Tell me the truth without words',
     url: 'http://goggle.com',
     author: 'bail',
     num_comments: 100,

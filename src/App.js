@@ -4,6 +4,13 @@ import './App.css';
 import list from './list.js';
 
 
+//filter the results by search
+function isSearched(searchTerm){
+  return function(item){
+    return !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
+  }
+}
+
 class App extends Component {
 
   //setting up internal component state
@@ -21,8 +28,8 @@ class App extends Component {
 
   //search value
   searchValue(e){
-
-    console.log({searchTerm: e.target.value});
+    e.preventDefault();
+    this.setState({searchTerm: e.target.value});
   }
 
   //remove method
@@ -38,7 +45,7 @@ class App extends Component {
           <input type= "text" onChange = {this.searchValue}/>
         </form>
          {
-          this.state.list.map((item) => {
+          this.state.list.filter(isSearched(this.state.searchTerm)).map((item) => {
              return (
                <div key= {item.objectID}>
                  <h1>{item.title} by {item.author}</h1>
