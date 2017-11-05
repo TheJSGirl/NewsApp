@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import list from './list.js';
-// import Search from './components/Search';
+import {Grid, Row} from 'react-bootstrape';
 
 
 //filter the results by search
@@ -67,11 +67,17 @@ class Search extends Component{
   console.log('props value',this.props);
   
     return(
-      <form>
-      <input type= "text" 
-      onChange = {this.props.onChange} 
-      value = {this.props.value}/>
-      </form>
+    <Grid>
+      <Row>
+        <div className= "jumbotron">
+          <form>
+            <input type= "text" 
+            onChange = {this.props.onChange} 
+            value = {this.props.value}/>
+        </form>
+        </div>
+      </Row>
+    </Grid>
     )
   }
 
