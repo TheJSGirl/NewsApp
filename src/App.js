@@ -83,12 +83,12 @@ class App extends Component {
         search = {this.searchValue.bind(this)}
         >NewsApp
         </Search>
-        {result ? 
+        {result &&
           <Table
           list = {result.hits}
           searchTerm = {searchTerm}
           removeItem = {this.removeItem}
-          /> : null
+          /> 
         }
         
        
