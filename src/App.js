@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
-// import logo from './logo.svg';
-import './App.css';
 import list from './list.js';
-import {Grid, Row} from 'react-bootstrape';
+import {Grid, Row, FormGroup} from 'react-bootstrap';
+
+//default parameters to fetch data from api
+const DEFAULT_QUERY = 'react';
+const PATH_BASE = 'https://hn.algolia.com/api/v1';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
+
+const url = `${PATH_BASE}${PATH_SEARCH}${PARAM_SEARCH}${DEFAULT_QUERY}`;
+console.log(url);          
 
 
 //filter the results by search
@@ -47,7 +54,8 @@ class App extends Component {
         onChange = {this.searchValue} 
         value = {searchTerm}
         search = {this.searchValue.bind(this)}
-        />
+        >NewsApp
+        </Search>
         <Table
         list = {list}
         searchTerm = {searchTerm}
@@ -64,16 +72,24 @@ class App extends Component {
 class Search extends Component{
   
   render(){
-  console.log('props value',this.props);
-  
+    const {children} = this.props;
     return(
-    <Grid>
+    <Grid fluid>
       <Row>
-        <div className= "jumbotron">
+        <div className = "jumbotron text-center">
           <form>
-            <input type= "text" 
-            onChange = {this.props.onChange} 
-            value = {this.props.value}/>
+            <FormGroup>
+              <h1 style = {{fontWeight: 'bold'}}>{children}</h1><hr style={{border: '2px solid black', width: '100px'}}/>
+              <div className = "input-group">
+                <input className = "form-control width100 searchForm" type= "text" 
+                onChange = {this.props.onChange} 
+                value = {this.props.value}/>
+                <span className = "input-group-btn">
+                <button className = "btn btn-primary searchBtn" type= "submit">Search
+                </button>
+                </span>
+              </div>
+            </FormGroup>
         </form>
         </div>
       </Row>
@@ -88,19 +104,21 @@ class Table extends Component{
   render(){
     const {list, searchTerm, removeItem} = this.props;
     return(
-      <div>
+      <div className="col-sm-10 col-sm-offset-1">
       {
            list.filter( isSearched(searchTerm)).map(item => 
             
                <div key= {item.objectID}>
-                 <h1>{item.title} by {item.author}</h1>
-                 <p>numberOfComments{item.num_comments} and points{item.points}</p>
+                 <h1>{item.title}</h1>
+                 <h4>{item.author} | {item.num_comments}Comments | {item.points} Points
                  <Button 
+                 className = "btn btn-danger btn-xs"
                   type = "button"
                   onClick = {() => 
                   removeItem(item.objectID)}
                   >Remove
                   </Button>
+                  </h4><hr/>
                </div>
                )
       }
@@ -111,9 +129,10 @@ class Table extends Component{
 
 class Button extends Component{
   render(){
-    const{type, onClick, children} = this.props;
+    const{type, onClick, children, className = ''} = this.props;
     return(
       <button 
+      className={className}
       type = {type} 
       onClick = {onClick}>{children}</button>
       

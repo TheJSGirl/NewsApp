@@ -3,3 +3,21 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.jumbotron{
+  background: linear-gradient(to right, blue, pink);
+}
+
+.searchForm{
+  height: 80px;
+  font-size: 50px;
+}
+
+.searchBtn{
+  height : 80px;
+  width: 200px;
+}
+
+.btn{
+  margin-left: 5px;
+}
