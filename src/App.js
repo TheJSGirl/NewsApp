@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import list from './list.js';
+// import list from './list.js';
 import {Grid, Row, FormGroup} from 'react-bootstrap';
 
 //default parameters to fetch data from api
@@ -8,7 +8,7 @@ const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
 
-const url = `${PATH_BASE}${PATH_SEARCH}${PARAM_SEARCH}${DEFAULT_QUERY}`;
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
 console.log(url);          
 
 
@@ -25,15 +25,37 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      list,
-      searchTerm: ' ',
+      result : null,
+      searchTerm: DEFAULT_QUERY,
 
     }
     //bind method
     this.removeItem = this.removeItem.bind(this);
     this.searchValue = this.searchValue.bind(this);
+    this.fetchTopStories = this.fetchTopStories.bind(this);
+    this.setTopStories = this.setTopStories.bind(this);
   }
 
+  //set top stories
+  setTopStories(result){
+    this.setState({result: result});
+  }
+  //fetch top stories
+  fetchTopStories(searchTerm){
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`)
+    .then(response =>response.json)
+    .then(result => {
+      console.log(result.hits);
+      this.setTopStories(result)})
+    .catch((error) => {
+      console.error(error);
+    })
+  }
+
+  //component did mount
+  componentDidMount(){
+    this.fetchTopStories(this.state.searchTerm);
+  }
   //search value
   searchValue(e){
     e.preventDefault();
@@ -47,7 +69,11 @@ class App extends Component {
     this.setState({list: updateList});
   }
   render() {
-    const {list, searchTerm} = this.state;
+    const {result, searchTerm} = this.state;
+
+    if(!result){
+      return null;
+    }
     return (
       <div className="App">
         <Search
@@ -57,7 +83,7 @@ class App extends Component {
         >NewsApp
         </Search>
         <Table
-        list = {list}
+        list = {result.hits}
         searchTerm = {searchTerm}
         removeItem = {this.removeItem}
         />
@@ -95,13 +121,14 @@ class Search extends Component{
       </Row>
     </Grid>
     )
-  }
+  } 
 
 }
 
 class Table extends Component{
   
   render(){
+    
     const {list, searchTerm, removeItem} = this.props;
     return(
       <div className="col-sm-10 col-sm-offset-1">
