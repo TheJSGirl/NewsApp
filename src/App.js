@@ -65,15 +65,16 @@ class App extends Component {
   //remove method
   removeItem(id){
     const notId = item => item.objectID !== id;
-    const updateList = this.state.list.filter(notId);
-    this.setState({list: updateList});
+    const updateList = this.state.result.hits.filter(notId);
+    // this.setState({result: Object.assign({}, this.state.result, {hits: updateList})});
+    this.setState({result: {...this.state.result, hits: updateList}});
   }
   render() {
     const {result, searchTerm} = this.state;
 
-    if(!result){
-      return null;
-    }
+    // if(!result){
+    //   return null;
+    // }
     return (
       <div className="App">
         <Search
@@ -82,11 +83,14 @@ class App extends Component {
         search = {this.searchValue.bind(this)}
         >NewsApp
         </Search>
-        <Table
-        list = {result.hits}
-        searchTerm = {searchTerm}
-        removeItem = {this.removeItem}
-        />
+        {result ? 
+          <Table
+          list = {result.hits}
+          searchTerm = {searchTerm}
+          removeItem = {this.removeItem}
+          /> : null
+        }
+        
        
       </div>
     );
