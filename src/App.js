@@ -43,7 +43,7 @@ class App extends Component {
   //fetch top stories
   fetchTopStories(searchTerm){
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`)
-    .then(response =>response.json)
+    .then(response =>response.json())
     .then(result => {
       console.log(result.hits);
       this.setTopStories(result)})
