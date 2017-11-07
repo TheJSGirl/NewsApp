@@ -34,6 +34,7 @@ class App extends Component {
     this.searchValue = this.searchValue.bind(this);
     this.fetchTopStories = this.fetchTopStories.bind(this);
     this.setTopStories = this.setTopStories.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   //set top stories
@@ -42,7 +43,7 @@ class App extends Component {
   }
   //fetch top stories
   fetchTopStories(searchTerm){
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`)
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
     .then(response =>response.json())
     .then(result => {
       console.log(result.hits);
@@ -55,6 +56,12 @@ class App extends Component {
   //component did mount
   componentDidMount(){
     this.fetchTopStories(this.state.searchTerm);
+  }
+
+  //on search submit function
+  onSubmit(event){
+    this.fetchTopStories(this.state.searchTerm);
+    event.preventDefault();
   }
   //search value
   searchValue(e){
@@ -81,6 +88,7 @@ class App extends Component {
         onChange = {this.searchValue} 
         value = {searchTerm}
         search = {this.searchValue.bind(this)}
+        onSubmit = {this.onSubmit}
         >NewsApp
         </Search>
         {result &&
@@ -102,12 +110,12 @@ class App extends Component {
 class Search extends Component{
   
   render(){
-    const {children} = this.props;
+    const {children, onSubmit, onChange, value} = this.props;
     return(
     <Grid fluid>
       <Row>
         <div className = "jumbotron text-center">
-          <form>
+          <form onSubmit = {onSubmit}> 
             <FormGroup>
               <h1 style = {{fontWeight: 'bold'}}>{children}</h1><hr style={{border: '2px solid black', width: '100px'}}/>
               <div className = "input-group">
@@ -137,8 +145,9 @@ class Table extends Component{
     return(
       <div className="col-sm-10 col-sm-offset-1">
       {
-           list.filter( isSearched(searchTerm)).map(item => 
-            
+          //  list.filter( isSearched(searchTerm)).map(item => 
+
+          list.map(item =>   
                <div key= {item.objectID}>
                  <h1>{item.title}</h1>
                  <h4>{item.author} | {item.num_comments}Comments | {item.points} Points
