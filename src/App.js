@@ -40,7 +40,15 @@ class App extends Component {
 
   //set top stories
   setTopStories(result){
-    this.setState({result: result});
+    //get the hits and page from the  result
+    const{hits, page} = result;
+
+    //meaning page is not 0, button has been clicked, page might be 1 or 2
+    const oldHits = page !==0 ? this.state.result.hits : [];
+    
+    //old hits are already available in the state
+    const updateHits = [...oldHits , ...hits];
+    this.setState({result:{hits : updateHits, page}});
   }
   //fetch top stories
   fetchTopStories(searchTerm, page){
@@ -105,7 +113,7 @@ class App extends Component {
           <Button
             className = "btn btn-success"
             onClick= {() => this.fetchTopStories(searchTerm, page +1)}>
-            Load More
+            Load more
           </Button>
         </div>
        
