@@ -4,20 +4,21 @@ import {Grid, Row, FormGroup} from 'react-bootstrap';
 
 //default parameters to fetch data from api
 const DEFAULT_QUERY = 'react';
+const DEFAULT_PAGE = 0;
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
-
-const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
+const PARAM_PAGE = 'page=';
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}${PARAM_PAGE}`;
 console.log(url);          
 
 
 //filter the results by search
-function isSearched(searchTerm){
-  return function(item){
-    return !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
-  }
-}
+// function isSearched(searchTerm){
+//   return function(item){
+//     return !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
+//   }
+// }
 
 class App extends Component {
 
@@ -42,8 +43,8 @@ class App extends Component {
     this.setState({result: result});
   }
   //fetch top stories
-  fetchTopStories(searchTerm){
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+  fetchTopStories(searchTerm, page){
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
     .then(response =>response.json())
     .then(result => {
       console.log(result.hits);
@@ -55,12 +56,12 @@ class App extends Component {
 
   //component did mount
   componentDidMount(){
-    this.fetchTopStories(this.state.searchTerm);
+    this.fetchTopStories(this.state.searchTerm,DEFAULT_PAGE );
   }
 
   //on search submit function
   onSubmit(event){
-    this.fetchTopStories(this.state.searchTerm);
+    this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
     event.preventDefault();
   }
   //search value
@@ -78,6 +79,7 @@ class App extends Component {
   }
   render() {
     const {result, searchTerm} = this.state;
+    const page = (result && result.page) || 0;
 
     // if(!result){
     //   return null;
@@ -99,6 +101,13 @@ class App extends Component {
           /> 
         }
         
+        <div className = "text-center alert">
+          <Button
+            className = "btn btn-success"
+            onClick= {() => this.fetchTopStories(searchTerm, page +1)}>
+            Load More
+          </Button>
+        </div>
        
       </div>
     );
@@ -120,11 +129,11 @@ class Search extends Component{
               <h1 style = {{fontWeight: 'bold'}}>{children}</h1><hr style={{border: '2px solid black', width: '100px'}}/>
               <div className = "input-group">
                 <input className = "form-control width100 searchForm" type= "text" 
-                onChange = {this.props.onChange} 
-                value = {this.props.value}/>
+                onChange = {onChange} 
+                value = {value}/>
                 <span className = "input-group-btn">
-                <button className = "btn btn-primary searchBtn" type= "submit">Search
-                </button>
+                <Button className = "btn btn-primary searchBtn" type= "submit">Search
+                </Button>
                 </span>
               </div>
             </FormGroup>
@@ -141,7 +150,7 @@ class Table extends Component{
   
   render(){
     
-    const {list, searchTerm, removeItem} = this.props;
+    const {list, removeItem} = this.props;
     return(
       <div className="col-sm-10 col-sm-offset-1">
       {
