@@ -29,7 +29,8 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      result : null,
+      results : null,
+      searchKey: '',
       searchTerm: DEFAULT_QUERY,
 
     }
@@ -42,16 +43,20 @@ class App extends Component {
   }
 
   //set top stories
-  setTopStories(result){
+  setTopStories(results, searchKey){
     //get the hits and page from the  result
-    const{hits, page} = result;
+    const{hits, page} = results;
 
     //meaning page is not 0, button has been clicked, page might be 1 or 2
-    const oldHits = page !==0 ? this.state.result.hits : [];
+    // const oldHits = page !==0 ? this.state.result.hits : [];
+
+    //redifine old hits
+    const oldHits = results && results[searchKey] ? results[searchKey].hits : [];
     
     //old hits are already available in the state
     const updateHits = [...oldHits , ...hits];
-    this.setState({result:{hits : updateHits, page}});
+
+    this.setState({results:{...results,[searchKey]:{ hits : updateHits, page}}});
   }
   //fetch top stories
   fetchTopStories(searchTerm, page){
@@ -67,11 +72,16 @@ class App extends Component {
 
   //component did mount
   componentDidMount(){
+    
+    const {searchTerm} = this.state;
+    this.setState({searchKey: searchTerm});
     this.fetchTopStories(this.state.searchTerm,DEFAULT_PAGE );
   }
 
   //on search submit function
   onSubmit(event){
+    const {searchTerm} = this.state;
+    this.setState({searchKey: searchTerm});
     this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
     event.preventDefault();
   }
@@ -84,13 +94,14 @@ class App extends Component {
   //remove method
   removeItem(id){
     const notId = item => item.objectID !== id;
-    const updateList = this.state.result.hits.filter(notId);
+    const updateList = this.state.results.hits.filter(notId);
     // this.setState({result: Object.assign({}, this.state.result, {hits: updateList})});
     this.setState({result: {...this.state.result, hits: updateList}});
   }
   render() {
-    const {result, searchTerm} = this.state;
-    const page = (result && result.page) || 0;
+    const {results, searchTerm, searchKey} = this.state;
+    const page = (results && results[searchKey] && results[searchKey].page ) || 0;
+    // const list = (results && results[searchKey] && results[searchKey].hits) || [];
 
     // if(!result){
     //   return null;
@@ -104,9 +115,9 @@ class App extends Component {
         onSubmit = {this.onSubmit}
         >NewsApp
         </Search>
-        {result &&
+        {results &&
           <Table
-          list = {result.hits}
+          list = {results.hits}
           searchTerm = {searchTerm}
           removeItem = {this.removeItem}
           /> 
